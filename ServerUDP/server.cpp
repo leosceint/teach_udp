@@ -1,6 +1,8 @@
 #include <iostream>
 #include <WinSock2.h>
 
+#include "CanData.h"
+
 #pragma comment(lib, "ws2_32.lib")
 
 using namespace std;
@@ -28,22 +30,20 @@ int main()
         exit(1);
     }
 
-    const int BufferSize = 1024;
-    char* buffer = new char[BufferSize];
-
+    const int BufferSize = sizeof(CanData);
+    CanData packet;
     while(true)
     {   
         cout << "Waiting for data" << endl;
 
         int recv_len;
-        memset(buffer, 0, BufferSize);
 
-        if((recv_len = recvfrom(connection, buffer, BufferSize, 0, reinterpret_cast<sockaddr*>(&addr), &sinlen) == SOCKET_ERROR))
+        if((recv_len = recvfrom(connection, (char*)&packet, BufferSize, 0, reinterpret_cast<sockaddr*>(&addr), &sinlen) == SOCKET_ERROR))
         {
             cout << "WE cannot receive data" << endl;
             break;
         }
-        cout << "--> WE get: " << buffer << endl; 
+        cout << "--> WE get : " << packet << endl; 
 
     }
 
